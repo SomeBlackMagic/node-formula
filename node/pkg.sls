@@ -27,7 +27,7 @@ nodejs:
 
 {%- if salt['pillar.get']('node:pkgs_global') %}
   {%- for pkg_name, pkg in pillar['node']['pkgs_global'].items() -%}
-    {% if salt['cmd.shell']('(npm list --depth=0 -g | grep ' + pkg_name + ') && echo ok || echo not') == "ok" %}
+    {% if salt['cmd.shell']('(npm ls ' + pkg_name + ' -g | grep -q "' + pkg_name + '@") && echo ok || echo not') == "ok" %}
 npm_pkg_{{pkg_name}}_installed:
   test.configurable_test_state:
     - name: state_warning
