@@ -88,7 +88,7 @@ install-node:
 
 {% else %}
 
-Version Control:
+Version-Control:
   test.succeed_without_changes:
     - name: Node version {{ nodeVersion }} already installed
 
