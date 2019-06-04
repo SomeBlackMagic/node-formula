@@ -24,3 +24,21 @@ nodejs:
 {%- if salt['pillar.get']('node:version', '') %}
     - version: {{ salt['pillar.get']('node:version', '') }}
 {%- endif %}
+
+{%- if salt['pillar.get']('node:pkgs_global') %}
+  {%- for pkg_name, pkg in pillar['node']['pkgs_global'].items() -%}
+    {% if salt['cmd.shell']('(npm ls ' + pkg_name + ' -g | grep -q "' + pkg_name + '@") && echo ok || echo not') == "ok" %}
+npm_pkg_{{pkg_name}}_installed:
+  test.configurable_test_state:
+    - name: state_warning
+    - changes: False
+    - result: True
+    - comment: "pkg {{ pkg_name }} already installed"
+    {% else %}
+npm_pkg_{{pkg_name}}_install:
+  cmd.run:
+    - name: "npm install -g {{ pkg }}"
+  {% endif %}
+  {%- endfor -%}
+{%- endif %}
+
